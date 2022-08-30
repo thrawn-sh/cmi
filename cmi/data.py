@@ -56,7 +56,6 @@ class LogFile:
 
     @classmethod
     def parse(cls, content: str, encoding: str):
-        print(content)
         parts = content.decode(encoding).split(' ')
         return LogFile(parts[0], int(parts[1]))
 
