@@ -95,7 +95,7 @@ class InfoH:
         self.header.export(f, encoding)
         for line in self.lines:
             f.write(line)
-        f.write(bytes('\r\n', encoding=encoding))
+        f.write(bytes('\r\n\r\n', encoding=encoding))
         f.write(bytes(f'{self.folder}\r\n', encoding=encoding))
 
     @classmethod
