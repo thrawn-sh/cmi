@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "cmi-dumper"
+name = "cmi"
 version = "1.0.0"
 description = "extract data from C.M.I."
 authors = ["Alexander Dreweke <thrawn@shadowhunt.de>"]
@@ -7,10 +7,9 @@ license = "GPL-3.0-or-later"
 readme = "README.md"
 
 [tool.poetry.dependencies]
+argparse = "^1.4.0"
 python = "^3.6"
 requests = "^2.27.1"
-boto3 = "^1.22.10"
-psycopg = "^3.0.12"
 
 [tool.poetry.dev-dependencies]
 flake9 = "^3.8.3"
