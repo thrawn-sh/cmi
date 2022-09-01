@@ -99,7 +99,7 @@ def __get_log_entries(arguments, session, path: str):
 def main():
     parser = argparse.ArgumentParser(description='query data from C.M.I', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--debug', default=False, type=bool, help='Generate debug output and file', action=argparse.BooleanOptionalAction)
-    parser.add_argument('--encoding', default='ASCII', type=str, help='file encoding')
+    parser.add_argument('--encoding', default='Windows-1252', type=str, help='file encoding')
     parser.add_argument('--host', default='cmi', type=str, help='C.M.I. hostname')
     parser.add_argument('--port', default=80, type=int, help='C.M.I. port')
     parser.add_argument('--user', default='winsol', type=str, help='Username to authenticate with')
