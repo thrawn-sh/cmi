@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import enum
 import struct
 
 
@@ -86,15 +87,25 @@ class Info:
 
 
 class InfoH:
-    def __init__(self, header: Header, lines: list, folder):
+    def __init__(self, header: Header, fields: list, folder):
         self.header = header
-        self.lines = lines
+        self.fields = fields
         self.folder = folder
 
     def export(self, f, encoding: str):
         self.header.export(f, encoding)
-        for line in self.lines:
-            f.write(line)
+
+        analog = 0
+        digital = 0
+        for field in self.fields:
+            if field.type == FieldType.ANALOG:
+                analog = analog + 1
+            else:
+                digital = digital + 1
+        f.write(struct.pack('<HH', analog, digital))
+
+        for field in self.fields:
+            field.export(f, encoding)
         f.write(bytes('\r\n\r\n', encoding=encoding))
         f.write(bytes(f'{self.folder}\r\n', encoding=encoding))
 
@@ -103,8 +114,47 @@ class InfoH:
         array = content.split(b'\r\n')
         header = Header.parse(array, encoding)
 
-        # FIXME parse data
-        lines = array[3:-3]
+        offset = 0
+        payload = array[3]
+        analog, digital = struct.unpack_from('<HH', payload, offset=offset)
+        offset = offset + 4
+
+        fields = []
+        for i in range(analog + digital):
+            fields.append(Field.parse(payload, offset, encoding))
+            offset = offset + 80
 
         folder = array[-2].decode(encoding)
-        return InfoH(header, lines, folder)
+        return InfoH(header, fields, folder)
+
+
+class FieldType(enum.IntEnum):
+    ANALOG = 0
+    DIGITAL = 1
+
+
+class Field:
+    def __init__(self, source: int, frame: int, can_id: int, device: int, count: int, type: FieldType, id3: int, unit: int, format: int, size: int, description: str):
+        self.source = source
+        self.frame = frame
+        self.can_id = can_id
+        self.device = device
+        self.count = count
+        self.type = type
+        self.id3 = id3
+        self.unit = unit
+        self.format = format
+        self.size = size
+        self.description = description
+        print(f'{source} {frame} {can_id} {device} {count} {type} {id3} {unit} {format} {size} "{description}"')
+
+    def export(self, f, encoding: str):
+        encoded_description = bytes(self.description, encoding=encoding)
+        packed = struct.pack('<BBBBBBBxBBBxxxxxxx62s', self.source, self.frame, self.can_id, self.device, self.count, self.type, self.id3, self.unit, self.format, self.size, encoded_description)
+        f.write(packed)
+
+    @classmethod
+    def parse(cls, content: str, offset: int, encoding: str):
+        source, frame, can_id, device, count, type, id3, unit, format, size, description = struct.unpack_from('<BBBBBBBxBBBxxxxxxx62s', content, offset=offset)
+        description = description.decode(encoding)
+        return Field(source, frame, can_id, device, count, type, id3, unit, format, size, description)
