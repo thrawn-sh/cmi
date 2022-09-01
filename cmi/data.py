@@ -146,7 +146,6 @@ class Field:
         self.format = format
         self.size = size
         self.description = description
-        print(f'{source} {frame} {can_id} {device} {count} {type} {id3} {unit} {format} {size} "{description}"')
 
     def export(self, f, encoding: str):
         encoded_description = bytes(self.description, encoding=encoding)
