@@ -14,7 +14,7 @@ CMI_DUMP = 'cmi-original'
 CMI_EXPORT = 'cmi-export'
 
 
-def parse_log(content: str, encoding: str):
+def parse_log(content: str, fields: list, encoding: str):
     array = content.split(b'\r\n')
 
     entries = []
@@ -48,8 +48,9 @@ def __dump_content(content, name: str):
         f.write(content)
 
 
-def __get_info(arguments, session, folder):
-    url = f'http://{arguments.host}:{arguments.port}/LOG/info{folder}.log'
+def __get_info(arguments, session, infoh: cmi.InfoH):
+    folder = infoh.folder
+    url = f'http://{arguments.host}:{arguments.port}/LOG/info{infoh.folder}.log'
     if arguments.debug:
         print(url)
 
@@ -81,19 +82,27 @@ def __get_infoh(arguments, session):
     return infoh
 
 
-def __get_log_entries(arguments, session, path: str):
-    url = f'http://{arguments.host}:{arguments.port}{path}'
-    if arguments.debug:
-        print(url)
+def __get_events(arguments, session, infoh: cmi.InfoH, info: cmi.Info):
+    events = []
+    for log_file in info.log_files:
+        path = log_file.path
+        url = f'http://{arguments.host}:{arguments.port}{path}'
+        if arguments.debug:
+            print(url)
 
-    response = session.get(url)
-    filename = os.path.basename(path)
-    if arguments.debug:
-        __dump_content(response.content, filename)
-    log = parse_log(response.content, arguments.encoding)
-    # if arguments.debug: export_log(log, filename)
+        response = session.get(url)
+        filename = os.path.basename(path)
+        if arguments.debug:
+           __dump_content(response.content, filename)
+        
+        group = cmi.EventGroup.parse(response.content, arguments.encoding)
+        if arguments.debug:
+            with open(f'{CMI_EXPORT}/{filename}', 'wb') as f:
+                group.export(f, arguments.encoding)
+        return None # TODO
 
-    return log
+    # FIXME
+    return events
 
 
 def main():
@@ -119,10 +128,8 @@ def main():
     session.headers.update({'User-Agent': 'Winsol/1.0'})
 
     infoh = __get_infoh(arguments, session)
-    info = __get_info(arguments, session, infoh.folder)
-
-    for log_file in info.log_files:
-        __get_log_entries(arguments, session, log_file.path)
+    info = __get_info(arguments, session, infoh)
+    events = __get_events(arguments, session, infoh, info)
 
 
 if __name__ == '__main__':
