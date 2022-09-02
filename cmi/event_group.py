@@ -31,7 +31,7 @@ class EventGroup:
 
         for event in self.events:
             event.export(f, encoding)
-        f.write(bytes('\r\n\r\n', encoding=encoding))
+            f.write(bytes('\r\n', encoding=encoding))
 
     @classmethod
     def parse(cls, content: str, encoding: str):
@@ -45,13 +45,22 @@ class EventGroup:
         offset = offset + 4
 
         fields = []
+        expected_size = 12
         for i in range(analog + digital):
             field = Field.parse(payload, offset, encoding)
+            expected_size = expected_size + field.size
             fields.append(field)
             offset = offset + 80
 
         events = []
+        index = 2
         for data in array[3:-1]:
-            events.append(Event.parse(data, fields, encoding))
+            index = index + 1
+            if len(data) != expected_size:
+                print(f'skipping {len(data)} [{index}]')
+                continue
 
-        return EventGroup(array[0], fields, events)
+            event = Event.parse(data, fields, encoding)
+            events.append(event)
+
+        return EventGroup(id, fields, events)

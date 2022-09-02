@@ -30,9 +30,9 @@ class EventValue:
             return None
 
         if size == 1:
-            value = bool(struct.unpack_from('<?', content, offset=offset))
+            value = bool(struct.unpack_from('<?', content, offset=offset)[0])
             return EventValue(field, value)
 
         if size == 4:
-            value = struct.unpack_from('<i', content, offset=offset)[0]
+            value = int(struct.unpack_from('<i', content, offset=offset)[0])
             return EventValue(field, value)

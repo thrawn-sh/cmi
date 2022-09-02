@@ -73,7 +73,6 @@ def __get_events(arguments, session, infoh: InfoH, info: Info):
         if arguments.debug:
             with open(f'{CMI_EXPORT}/{filename}', 'wb') as f:
                 group.export(f, arguments.encoding)
-        return None # TODO
 
     # FIXME
     return events
