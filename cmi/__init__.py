@@ -1,9 +1,0 @@
-# from .Event import Event
-# from .EventGroup import EventGroup
-# from .Field import Field
-# from .FieldType import FieldType
-# from .Header import Header
-# from .Info import Info
-# from .InfoH import InfoH
-# from .LogFile import LogFile
-# from .Version import Version
