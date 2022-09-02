@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import cmi
+from cmi.header   import Header
+from cmi.log_file import LogFile
 
 
 class Info:
-    def __init__(self, header: cmi.Header, log_files: cmi.LogFile):
+    def __init__(self, header: Header, log_files: LogFile):
         self.header = header
         self.log_files = log_files
 
@@ -19,10 +20,10 @@ class Info:
     @classmethod
     def parse(cls, content: str, encoding: str):
         array = content.split(b'\r\n')
-        header = cmi.Header.parse(array, encoding)
+        header = Header.parse(array, encoding)
 
         log_files = []
         for line in array[5:-1]:
-            log_files.append(cmi.LogFile.parse(line, encoding))
+            log_files.append(LogFile.parse(line, encoding))
 
         return Info(header, log_files)

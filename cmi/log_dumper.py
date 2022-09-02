@@ -8,39 +8,13 @@ import requests
 import shutil
 import struct
 
-import cmi
+from cmi.header      import Header
+from cmi.info        import Info
+from cmi.info_h      import InfoH
+from cmi.event_group import EventGroup
 
 CMI_DUMP = 'cmi-original'
 CMI_EXPORT = 'cmi-export'
-
-
-def parse_log(content: str, fields: list, encoding: str):
-    array = content.split(b'\r\n')
-
-    entries = []
-    for entry in array[3:]:
-        if len(entry) != 98:
-            continue
-
-        offset = 0
-        # parse timestamp
-        day, month, year, second, minute, hour = struct.unpack_from('<BBBBBBxx', entry, offset=offset)
-        offset = offset + 8
-        time = datetime.datetime.strptime(f'{2000+year}-{month:02}-{day:02} {hour:02}:{minute:02}:{second:02}', '%Y-%m-%d %H:%M:%S')
-
-        # parse analog
-        analog = []
-        for i in range(16):
-            value = struct.unpack_from('<hxx', entry, offset=offset)
-            analog.append(value)
-            offset = offset + 4
-
-        # parse digial
-        digital = []
-
-        entries.append(cmi.Entry(time, analog, digital))
-
-    return entries
 
 
 def __dump_content(content, name: str):
@@ -48,7 +22,7 @@ def __dump_content(content, name: str):
         f.write(content)
 
 
-def __get_info(arguments, session, infoh: cmi.InfoH):
+def __get_info(arguments, session, infoh: InfoH):
     folder = infoh.folder
     url = f'http://{arguments.host}:{arguments.port}/LOG/info{infoh.folder}.log'
     if arguments.debug:
@@ -57,7 +31,7 @@ def __get_info(arguments, session, infoh: cmi.InfoH):
     response = session.get(url)
     if arguments.debug:
         __dump_content(response.content, f'info{folder}.log')
-    info = cmi.Info.parse(response.content, arguments.encoding)
+    info = Info.parse(response.content, arguments.encoding)
     if arguments.debug:
         with open(f'{CMI_EXPORT}/info{folder}.log', 'wb') as f:
             info.export(f, arguments.encoding)
@@ -73,7 +47,7 @@ def __get_infoh(arguments, session):
     response = session.get(url)
     if arguments.debug:
         __dump_content(response.content, 'infoh.log')
-    infoh = cmi.InfoH.parse(response.content, arguments.encoding)
+    infoh = InfoH.parse(response.content, arguments.encoding)
 
     if arguments.debug:
         with open(f'{CMI_EXPORT}/infoh.log', 'wb') as f:
@@ -82,7 +56,7 @@ def __get_infoh(arguments, session):
     return infoh
 
 
-def __get_events(arguments, session, infoh: cmi.InfoH, info: cmi.Info):
+def __get_events(arguments, session, infoh: InfoH, info: Info):
     events = []
     for log_file in info.log_files:
         path = log_file.path
@@ -95,7 +69,7 @@ def __get_events(arguments, session, infoh: cmi.InfoH, info: cmi.Info):
         if arguments.debug:
            __dump_content(response.content, filename)
         
-        group = cmi.EventGroup.parse(response.content, arguments.encoding)
+        group = EventGroup.parse(response.content, arguments.encoding)
         if arguments.debug:
             with open(f'{CMI_EXPORT}/{filename}', 'wb') as f:
                 group.export(f, arguments.encoding)

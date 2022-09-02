@@ -2,11 +2,12 @@
 
 import struct
 
-import cmi
+from cmi.field  import Field, FieldType
+from cmi.header import Header
 
 
 class InfoH:
-    def __init__(self, header: cmi.Header, fields: list[cmi.Field], folder):
+    def __init__(self, header: Header, fields: list[Field], folder):
         self.header = header
         self.fields = fields
         self.folder = folder
@@ -17,7 +18,7 @@ class InfoH:
         analog = 0
         digital = 0
         for field in self.fields:
-            if field.type == cmi.FieldType.ANALOG:
+            if field.type == FieldType.ANALOG:
                 analog = analog + 1
             else:
                 digital = digital + 1
@@ -31,7 +32,7 @@ class InfoH:
     @classmethod
     def parse(cls, content: str, encoding: str):
         array = content.split(b'\r\n')
-        header = cmi.Header.parse(array, encoding)
+        header = Header.parse(array, encoding)
 
         offset = 0
         payload = array[3]
@@ -40,7 +41,7 @@ class InfoH:
 
         fields = []
         for i in range(analog + digital):
-            fields.append(cmi.Field.parse(payload, offset, encoding))
+            fields.append(Field.parse(payload, offset, encoding))
             offset = offset + 80
 
         folder = array[-2].decode(encoding)

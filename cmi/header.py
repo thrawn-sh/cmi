@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import cmi
+from cmi.version import Version
 
 
 class Header:
-    def __init__(self, logger: str, version: cmi.Version, storekrit: str):
+    def __init__(self, logger: str, version: Version, storekrit: str):
         self.logger = logger
         self.version = version
         self.storekrit = storekrit
@@ -17,6 +17,6 @@ class Header:
     @classmethod
     def parse(cls, data: list[str], encoding: str):
         logger = data[0].decode(encoding)
-        version = cmi.Version.parse(data[1], encoding)
+        version = Version.parse(data[1], encoding)
         storekrit = data[2].decode(encoding).split(' ')
         return Header(logger, version, storekrit[1])
