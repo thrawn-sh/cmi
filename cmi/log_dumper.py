@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-import json
 
-from cmi.extractor import Configuration, Data, Extractor
+from cmi.extractor import Configuration, Extractor
 
 
 def main():
@@ -18,6 +17,7 @@ def main():
 
     arguments = parser.parse_args()
     Extractor.process(Configuration(arguments.host, arguments.port, arguments.user, arguments.password, arguments.encoding, arguments.debug))
+
 
 if __name__ == '__main__':
     main()
