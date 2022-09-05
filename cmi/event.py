@@ -21,8 +21,7 @@ class Event:
         f.write(struct.pack('<I', self.checksum))
 
     @classmethod
-    def parse(cls, content: str, fields: list[Field], encoding: str):
-        offset = 0
+    def parse(cls, content: str, fields: list[Field], offset: int, encoding: str):
         # parse timestamp
         day, month, year, second, minute, hour = struct.unpack_from('<BBBBBBxx', content, offset=offset)
         offset = offset + 8

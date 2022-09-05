@@ -35,32 +35,24 @@ class EventGroup:
 
     @classmethod
     def parse(cls, content: str, encoding: str):
-        array = content.split(b'\r\n')
-
-        id = array[0]
-
-        offset = 0
-        payload = array[1]
-        analog, digital = struct.unpack_from('<HH', payload, offset=offset)
-        offset = offset + 4
+        id, analog, digital = struct.unpack_from('<8sxxHH', content, offset=0)
+        offset = 14 # id(8) + \r\n(2) + counts(4)
 
         fields = []
-        expected_size = 12
+        event_size = 14 # timestamp(6) + values(?) + checksum(6) + \r\n(2)
         for i in range(analog + digital):
-            field = Field.parse(payload, offset, encoding)
-            expected_size = expected_size + field.size
+            field = Field.parse(content, offset, encoding)
+            event_size = event_size + field.size
             fields.append(field)
             offset = offset + 80
 
-        events = []
-        index = 2
-        for data in array[3:-1]:
-            index = index + 1
-            if len(data) != expected_size:
-                print(f'skipping {len(data)} [{index}]')
-                continue
+        offset = offset + 4 # \r\n\r\n(4)
 
-            event = Event.parse(data, fields, encoding)
+        total_size = len(content)
+        events = []
+        while (offset + event_size) <= len(content):
+            event = Event.parse(content, fields, offset, encoding)
             events.append(event)
+            offset = offset + event_size
 
         return EventGroup(id, fields, events)
