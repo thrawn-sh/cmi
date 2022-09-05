@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from cmi.header   import Header
+from cmi.header import Header
 from cmi.log_file import LogFile
 
 

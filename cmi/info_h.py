@@ -2,7 +2,7 @@
 
 import struct
 
-from cmi.field  import Field, FieldType
+from cmi.field import Field, FieldType
 from cmi.header import Header
 
 

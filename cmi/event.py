@@ -4,7 +4,7 @@ import datetime
 import struct
 
 from cmi.event_value import EventValue
-from cmi.field       import Field
+from cmi.field import Field
 
 
 class Event:

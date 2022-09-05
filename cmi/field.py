@@ -3,9 +3,11 @@
 import enum
 import struct
 
+
 class FieldType(enum.IntEnum):
     ANALOG = 0
     DIGITAL = 1
+
 
 class Field:
     def __init__(self, source: int, frame: int, can_id: int, device: int, count: int, type: FieldType, id3: int, unit: int, format: int, size: int, description: str):
