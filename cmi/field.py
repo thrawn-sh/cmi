@@ -9,8 +9,14 @@ class FieldType(enum.IntEnum):
     DIGITAL = 1
 
 
+class FieldUnit(enum.IntEnum):
+    CELCIUS = 1
+    VOLT = 13
+    BOOLEAN = 43
+
+
 class Field:
-    def __init__(self, source: int, frame: int, can_id: int, device: int, count: int, type: FieldType, id3: int, unit: int, format: int, size: int, description: str):
+    def __init__(self, source: int, frame: int, can_id: int, device: int, count: int, type: FieldType, id3: int, unit: FieldUnit, format: int, size: int, description: str):
         self.source = source
         self.frame = frame
         self.can_id = can_id
