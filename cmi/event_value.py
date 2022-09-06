@@ -2,7 +2,7 @@
 
 import struct
 
-from cmi.field import Field
+from cmi.field import Field, FieldUnit
 
 
 class EventValue:
@@ -15,13 +15,21 @@ class EventValue:
         if size == 0:
             return
 
+        format = ''
         if size == 1:
-            f.write(struct.pack('<?', self.value))
-            return
-
+            format = '<b'
         if size == 4:
-            f.write(struct.pack('<i', self.value))
-            return
+            format = '<i'
+
+        value = self.value
+        if field.unit == FieldUnit.BOOLEAN:
+            value = int(value)
+        if field.unit == FieldUnit.CELCIUS:
+            value = value * 10
+        if field.unit == FieldUnit.VOLT:
+            value = value * 100
+
+        f.write(struct.pack(format, value))
 
     @classmethod
     def parse(cls, content: str, offset: int, field, encoding: str):
@@ -29,10 +37,16 @@ class EventValue:
         if size == 0:
             return None
 
+        format = ''
         if size == 1:
-            value = bool(struct.unpack_from('<?', content, offset=offset)[0])
-            return EventValue(field, value)
-
+            format = '<b'
         if size == 4:
-            value = int(struct.unpack_from('<i', content, offset=offset)[0])
-            return EventValue(field, value)
+            format = '<i'
+
+        value = struct.unpack_from(format, content, offset=offset)[0]
+        if field.unit == FieldUnit.BOOLEAN:
+            return EventValue(field, bool(value))
+        if field.unit == FieldUnit.CELCIUS:
+            return EventValue(field, int(value)/10)
+        if field.unit == FieldUnit.VOLT:
+            return EventValue(field, int(value)/100)
