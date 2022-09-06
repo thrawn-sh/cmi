@@ -103,4 +103,5 @@ class Extractor:
 
         infoh = Extractor.__get_infoh(configuration, session)
         info = Extractor.__get_info(configuration, session, infoh)
-        return Extractor.__get_event_groups(configuration, session, infoh, info)
+        groups = Extractor.__get_event_groups(configuration, session, infoh, info)
+        return Data(infoh, info, groups)
