@@ -1,3 +1,4 @@
+*.csv
 /cmi-export
 /cmi-original
 /dist
