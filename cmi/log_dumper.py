@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import csv
 
 from cmi.extractor import Configuration, Extractor
 
@@ -16,8 +17,16 @@ def main():
     parser.add_argument('--password', default='data', type=str, help='Password to authenticate with')
 
     arguments = parser.parse_args()
-    Extractor.process(Configuration(arguments.host, arguments.port, arguments.user, arguments.password, arguments.encoding, arguments.debug))
+    data = Extractor.process(Configuration(arguments.host, arguments.port, arguments.user, arguments.password, arguments.encoding, arguments.debug))
 
+    with open('cmi.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
+        for group in data.groups:
+            for event in group.events:
+                row = [ event.time ]
+                for value in event.values:
+                    row.append(value.value)
+                writer.writerow(row)
 
 if __name__ == '__main__':
     main()
