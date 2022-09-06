@@ -22,11 +22,11 @@ class EventValue:
             format = '<i'
 
         value = self.value
-        if field.unit == FieldUnit.BOOLEAN:
+        if self.field.unit == FieldUnit.BOOLEAN:
             value = int(value)
-        if field.unit == FieldUnit.CELCIUS:
+        if self.field.unit == FieldUnit.CELCIUS:
             value = value * 10
-        if field.unit == FieldUnit.VOLT:
+        if self.field.unit == FieldUnit.VOLT:
             value = value * 100
 
         f.write(struct.pack(format, value))
@@ -47,6 +47,6 @@ class EventValue:
         if field.unit == FieldUnit.BOOLEAN:
             return EventValue(field, bool(value))
         if field.unit == FieldUnit.CELCIUS:
-            return EventValue(field, int(value)/10)
+            return EventValue(field, int(value) / 10)
         if field.unit == FieldUnit.VOLT:
-            return EventValue(field, int(value)/100)
+            return EventValue(field, int(value) / 100)

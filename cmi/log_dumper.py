@@ -23,10 +23,11 @@ def main():
         writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
         for group in data.groups:
             for event in group.events:
-                row = [ event.time ]
+                row = [event.time]
                 for value in event.values:
                     row.append(value.value)
                 writer.writerow(row)
+
 
 if __name__ == '__main__':
     main()
