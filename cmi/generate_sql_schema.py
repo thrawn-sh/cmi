@@ -30,7 +30,7 @@ def main() -> None:
         for field in data.infoH.fields:
             if field.size == 0:
                 continue
-            
+
             space = None
             type = None
             if field.unit == FieldUnit.BOOLEAN:
@@ -51,6 +51,7 @@ def main() -> None:
             sqlfile.write(f'\t{name}\t{type},{space}-- {field.description}{new_line}')
         sqlfile.write(f'\tUNIQUE\t\t(time){new_line}')
         sqlfile.write(f');{new_line}')
+
 
 if __name__ == '__main__':
     main()
