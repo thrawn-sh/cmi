@@ -3,6 +3,8 @@
 import enum
 import struct
 
+from cmi.field import Field
+
 
 class FieldType(enum.IntEnum):
     ANALOG = 0
@@ -16,7 +18,7 @@ class FieldUnit(enum.IntEnum):
 
 
 class Field:
-    def __init__(self, source: int, frame: int, can_id: int, device: int, count: int, type: FieldType, id3: int, unit: FieldUnit, format: int, size: int, description: str):
+    def __init__(self, source: int, frame: int, can_id: int, device: int, count: int, type: FieldType, id3: int, unit: FieldUnit, format: int, size: int, description: str) -> None:
         self.source = source
         self.frame = frame
         self.can_id = can_id
@@ -29,13 +31,13 @@ class Field:
         self.size = size
         self.description = description
 
-    def export(self, f, encoding: str):
+    def export(self, f, encoding: str) -> None:
         encoded_description = bytes(self.description, encoding=encoding)
         packed = struct.pack('<BBBBBBBxBBBxxxxxxx62s', self.source, self.frame, self.can_id, self.device, self.count, self.type, self.id3, self.unit, self.format, self.size, encoded_description)
         f.write(packed)
 
     @classmethod
-    def parse(cls, content: str, offset: int, encoding: str):
+    def parse(cls, content: str, offset: int, encoding: str) -> Field:
         source, frame, can_id, device, count, type, id3, unit, format, size, description = struct.unpack_from('<BBBBBBBxBBBxxxxxxx62s', content, offset=offset)
         description = description.decode(encoding)
         return Field(source, frame, can_id, device, count, type, id3, unit, format, size, description)

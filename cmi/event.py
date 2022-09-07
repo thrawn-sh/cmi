@@ -3,17 +3,19 @@
 import datetime
 import struct
 
+from cmi.event import Event
 from cmi.event_value import EventValue
 from cmi.field import Field
 
 
 class Event:
-    def __init__(self, time: datetime.datetime, values: EventValue, checksum: int):
+
+    def __init__(self, time: datetime.datetime, values: EventValue, checksum: int) -> None:
         self.time = time
         self.values = values
         self.checksum = checksum
 
-    def export(self, f, encoding: str):
+    def export(self, f, encoding: str) -> None:
         time = self.time
         f.write(struct.pack('<BBBBBBxx', time.day, time.month, (time.year - 2000), time.second, time.minute, time.hour))
         for value in self.values:
@@ -21,7 +23,7 @@ class Event:
         f.write(struct.pack('<I', self.checksum))
 
     @classmethod
-    def parse(cls, content: str, fields: list[Field], offset: int, encoding: str):
+    def parse(cls, content: str, fields: list[Field], offset: int, encoding: str) -> Event:
         # parse timestamp
         day, month, year, second, minute, hour = struct.unpack_from('<BBBBBBxx', content, offset=offset)
         offset = offset + 8

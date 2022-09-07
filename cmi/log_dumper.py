@@ -8,7 +8,7 @@ import datetime
 from cmi.extractor import Configuration, Extractor
 
 
-def main():
+def main() -> None:
     now = datetime.date.today()
     parser = argparse.ArgumentParser(description='query data from C.M.I', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--debug', default=False, type=bool, help='Generate debug output and file', action=argparse.BooleanOptionalAction)

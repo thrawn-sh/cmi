@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
 
 from cmi.version import Version
+from cmi.header import Header
 
 
 class Header:
-    def __init__(self, logger: str, version: Version, storekrit: str):
+    def __init__(self, logger: str, version: Version, storekrit: str) -> None:
         self.logger = logger
         self.version = version
         self.storekrit = storekrit
 
-    def export(self, f, encoding: str):
+    def export(self, f, encoding: str) -> None:
         f.write(bytes(f'{self.logger}\r\n', encoding=encoding))
         self.version.export(f, encoding)
         f.write(bytes(f'storekrit: {self.storekrit}\r\n', encoding=encoding))
 
     @classmethod
-    def parse(cls, data: list[str], encoding: str):
+    def parse(cls, data: list[str], encoding: str) -> Header:
         logger = data[0].decode(encoding)
         version = Version.parse(data[1], encoding)
         storekrit = data[2].decode(encoding).split(' ')

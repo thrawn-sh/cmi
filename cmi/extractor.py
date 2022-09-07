@@ -15,7 +15,7 @@ CMI_EXPORT = 'cmi-export'
 
 class Configuration:
 
-    def __init__(self, host='cmi', port=80, user='cmi', password='', encoding='Windows-1252', after=datetime.date(1970, 1, 1), before=datetime.date.today(), debug=False):
+    def __init__(self, host: str = 'cmi', port: int = 80, user: str = 'cmi', password: str = '', encoding: str = 'Windows-1252', after: datetime.date = datetime.date(1970, 1, 1), before: datetime.date = datetime.date.today(), debug: bool = False) -> None:
         self.host = host
         self.port = port
         self.user = user
@@ -28,7 +28,7 @@ class Configuration:
 
 class Data:
 
-    def __init__(self, infoH: InfoH, info: Info, groups: list[EventGroup]):
+    def __init__(self, infoH: InfoH, info: Info, groups: list[EventGroup]) -> None:
         self.infoH = infoH
         self.info = Info
         self.groups = groups
@@ -37,16 +37,16 @@ class Data:
 class Extractor:
 
     @classmethod
-    def __basename_to_date(cls, basename: str):
+    def __basename_to_date(cls, basename: str) -> datetime.date:
         return datetime.datetime.strptime(basename, 'data_%Y_%m_%d_%H_%M_%S.log').date()
 
     @classmethod
-    def __dump_content(cln, content, name: str):
+    def __dump_content(cln, content, name: str) -> None:
         with open(f'{CMI_DUMP}/{name}', 'wb') as f:
             f.write(content)
 
     @classmethod
-    def __get_info(cls, configuration, session, infoh: InfoH):
+    def __get_info(cls, configuration, session, infoh: InfoH) -> Info:
         folder = infoh.folder
         url = f'http://{configuration.host}:{configuration.port}/LOG/info{infoh.folder}.log'
         if configuration.debug:
@@ -63,7 +63,7 @@ class Extractor:
         return info
 
     @classmethod
-    def __get_infoh(cls, configuration, session):
+    def __get_infoh(cls, configuration, session) -> InfoH:
         url = f'http://{configuration.host}:{configuration.port}/LOG/infoh.log'
         if configuration.debug:
             print(url)
@@ -80,7 +80,7 @@ class Extractor:
         return infoh
 
     @classmethod
-    def __get_event_groups(cls, configuration, session, infoh: InfoH, info: Info):
+    def __get_event_groups(cls, configuration, session, infoh: InfoH, info: Info) -> list[EventGroup]:
         groups = []
         for log_file in info.log_files:
             path = log_file.path
@@ -110,7 +110,7 @@ class Extractor:
         return groups
 
     @classmethod
-    def process(cls, configuration: Configuration):
+    def process(cls, configuration: Configuration) -> Data:
         session = requests.Session()
         session.auth = (configuration.user, configuration.password)
         session.headers.update({'Accept': '*/*'})

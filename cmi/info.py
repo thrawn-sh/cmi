@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
 from cmi.header import Header
+from cmi.info import Info
 from cmi.log_file import LogFile
 
 
 class Info:
-    def __init__(self, header: Header, log_files: LogFile):
+    def __init__(self, header: Header, log_files: LogFile) -> None:
         self.header = header
         self.log_files = log_files
 
-    def export(self, f, encoding: str):
+    def export(self, f, encoding: str) -> None:
         self.header.export(f, encoding)
         f.write(b'\x00\x00\x00\x00')
         f.write(bytes('\r\n\r\n', encoding=encoding))
@@ -18,7 +19,7 @@ class Info:
             log_file.export(f, encoding)
 
     @classmethod
-    def parse(cls, content: str, encoding: str):
+    def parse(cls, content: str, encoding: str) -> Info:
         array = content.split(b'\r\n')
         header = Header.parse(array, encoding)
 

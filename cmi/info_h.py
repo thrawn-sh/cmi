@@ -4,15 +4,16 @@ import struct
 
 from cmi.field import Field, FieldType
 from cmi.header import Header
+from cmi.info_h import InfoH
 
 
 class InfoH:
-    def __init__(self, header: Header, fields: list[Field], folder):
+    def __init__(self, header: Header, fields: list[Field], folder) -> None:
         self.header = header
         self.fields = fields
         self.folder = folder
 
-    def export(self, f, encoding: str):
+    def export(self, f, encoding: str) -> None:
         self.header.export(f, encoding)
 
         analog = 0
@@ -30,7 +31,7 @@ class InfoH:
         f.write(bytes(f'{self.folder}\r\n', encoding=encoding))
 
     @classmethod
-    def parse(cls, content: str, encoding: str):
+    def parse(cls, content: str, encoding: str) -> InfoH:
         array = content.split(b'\r\n')
         header = Header.parse(array, encoding)
 

@@ -3,16 +3,17 @@
 import struct
 
 from cmi.event import Event
+from cmi.event_group import EventGroup
 from cmi.field import Field, FieldType
 
 
 class EventGroup:
-    def __init__(self, id: str, fields: list[Field], events: list[Event]):
+    def __init__(self, id: str, fields: list[Field], events: list[Event]) -> None:
         self.id = id
         self.fields = fields
         self.events = events
 
-    def export(self, f, encoding: str):
+    def export(self, f, encoding: str) -> None:
         f.write(self.id)
         f.write(bytes('\r\n', encoding=encoding))
 
@@ -34,7 +35,7 @@ class EventGroup:
             f.write(bytes('\r\n', encoding=encoding))
 
     @classmethod
-    def parse(cls, content: str, encoding: str):
+    def parse(cls, content: str, encoding: str) -> EventGroup:
         id, analog, digital = struct.unpack_from('<8sxxHH', content, offset=0)
         offset = 14  # id(8) + \r\n(2) + counts(4)
 
