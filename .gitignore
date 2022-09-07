@@ -1,4 +1,5 @@
 *.csv
+*.sql
 /cmi-export
 /cmi-original
 /dist
