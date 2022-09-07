@@ -3,6 +3,7 @@
 
 import os
 import requests
+import datetime
 
 from cmi.info import Info
 from cmi.info_h import InfoH
@@ -14,12 +15,14 @@ CMI_EXPORT = 'cmi-export'
 
 class Configuration:
 
-    def __init__(self, host='cmi', port=80, user='cmi', password='', encoding='Windows-1252', debug=False):
+    def __init__(self, host='cmi', port=80, user='cmi', password='', encoding='Windows-1252', after=datetime.date(1970, 1, 1), before=datetime.date.today(), debug=False):
         self.host = host
         self.port = port
         self.user = user
         self.password = password
         self.encoding = encoding
+        self.after = after
+        self.before = before
         self.debug = debug
 
 
@@ -32,6 +35,10 @@ class Data:
 
 
 class Extractor:
+
+    @classmethod
+    def __basename_to_date(cls, basename: str):
+        return datetime.datetime.strptime(basename, 'data_%Y_%m_%d_%H_%M_%S.log').date()
 
     @classmethod
     def __dump_content(cln, content, name: str):
@@ -77,12 +84,20 @@ class Extractor:
         groups = []
         for log_file in info.log_files:
             path = log_file.path
+            basename = os.path.basename(path)
+            date = Extractor.__basename_to_date(basename)
+            if configuration.after > date:
+                continue
+            if configuration.before < date:
+                continue
+
             url = f'http://{configuration.host}:{configuration.port}{path}'
             if configuration.debug:
                 print(url)
 
+            url = f'http://{configuration.host}:{configuration.port}{path}'
             response = session.get(url)
-            filename = f'LOG/{os.path.basename(path)}'
+            filename = f'LOG/{basename}'
             if configuration.debug:
                 Extractor.__dump_content(response.content, filename)
 
