@@ -15,7 +15,7 @@ CMI_EXPORT = 'cmi-export'
 
 class Configuration:
 
-    def __init__(self, host: str = 'cmi', port: int = 80, user: str = 'cmi', password: str = '', encoding: str = 'Windows-1252', after: datetime.date = datetime.date(1970, 1, 1), before: datetime.date = datetime.date.today(), debug: bool = False) -> None:
+    def __init__(self, host: str = 'cmi', port: int = 80, user: str = 'cmi', password: str = '', encoding: str = 'Windows-1252', after: datetime.date = datetime.date(1970, 1, 1), before: datetime.date = datetime.date.today(), store_raw: bool = False) -> None:
         self.host = host
         self.port = port
         self.user = user
@@ -23,7 +23,7 @@ class Configuration:
         self.encoding = encoding
         self.after = after
         self.before = before
-        self.debug = debug
+        self.store_raw = store_raw
 
 
 class Data:
@@ -41,42 +41,21 @@ class Extractor:
         return datetime.datetime.strptime(basename, 'data_%Y_%m_%d_%H_%M_%S.log').date()
 
     @classmethod
-    def __dump_content(cln, content, name: str) -> None:
-        with open(f'{CMI_DUMP}/{name}', 'wb') as f:
-            f.write(content)
-
-    @classmethod
     def __get_info(cls, configuration, session, infoh: InfoH) -> Info:
-        folder = infoh.folder
         url = f'http://{configuration.host}:{configuration.port}/LOG/info{infoh.folder}.log'
-        if configuration.debug:
-            print(url)
-
         response = session.get(url)
-        if configuration.debug:
-            Extractor.__dump_content(response.content, f'info{folder}.log')
         info = Info.parse(response.content, configuration.encoding)
-        if configuration.debug:
-            with open(f'{CMI_EXPORT}/info{folder}.log', 'wb') as f:
-                info.export(f, configuration.encoding)
-
+        if configuration.store_raw:
+            info.raw = response.content
         return info
 
     @classmethod
     def __get_infoh(cls, configuration, session) -> InfoH:
         url = f'http://{configuration.host}:{configuration.port}/LOG/infoh.log'
-        if configuration.debug:
-            print(url)
-
         response = session.get(url)
-        if configuration.debug:
-            Extractor.__dump_content(response.content, 'infoh.log')
         infoh = InfoH.parse(response.content, configuration.encoding)
-
-        if configuration.debug:
-            with open(f'{CMI_EXPORT}/infoh.log', 'wb') as f:
-                infoh.export(f, configuration.encoding)
-
+        if configuration.store_raw:
+            infoh.raw = response.content
         return infoh
 
     @classmethod
@@ -92,21 +71,12 @@ class Extractor:
                 continue
 
             url = f'http://{configuration.host}:{configuration.port}{path}'
-            if configuration.debug:
-                print(url)
-
-            url = f'http://{configuration.host}:{configuration.port}{path}'
             response = session.get(url)
-            filename = f'LOG/{basename}'
-            if configuration.debug:
-                Extractor.__dump_content(response.content, filename)
 
             group = EventGroup.parse(response.content, configuration.encoding)
+            if configuration.store_raw:
+                group.raw = response.content
             groups.append(group)
-            if configuration.debug:
-                with open(f'{CMI_EXPORT}/LOG/{filename}', 'wb') as f:
-                    group.export(f, configuration.encoding)
-
         return groups
 
     @classmethod

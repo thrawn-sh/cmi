@@ -1,6 +1,5 @@
 *.csv
 *.sql
-/cmi-export
-/cmi-original
+/dump
 /dist
 __pycache__
