@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from cmi.header import Header
-from cmi.info import Info
 from cmi.log_file import LogFile
 
 
@@ -19,7 +18,7 @@ class Info:
             log_file.export(f, encoding)
 
     @classmethod
-    def parse(cls, content: str, encoding: str) -> Info:
+    def parse(cls, content: str, encoding: str):
         array = content.split(b'\r\n')
         header = Header.parse(array, encoding)
 

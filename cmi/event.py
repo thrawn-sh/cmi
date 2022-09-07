@@ -3,7 +3,6 @@
 import datetime
 import struct
 
-from cmi.event import Event
 from cmi.event_value import EventValue
 from cmi.field import Field
 
@@ -23,7 +22,7 @@ class Event:
         f.write(struct.pack('<I', self.checksum))
 
     @classmethod
-    def parse(cls, content: str, fields: list[Field], offset: int, encoding: str) -> Event:
+    def parse(cls, content: str, fields: list[Field], offset: int, encoding: str):
         # parse timestamp
         day, month, year, second, minute, hour = struct.unpack_from('<BBBBBBxx', content, offset=offset)
         offset = offset + 8

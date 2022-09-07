@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from cmi.version import Version
-from cmi.header import Header
 
 
 class Header:
@@ -16,7 +15,7 @@ class Header:
         f.write(bytes(f'storekrit: {self.storekrit}\r\n', encoding=encoding))
 
     @classmethod
-    def parse(cls, data: list[str], encoding: str) -> Header:
+    def parse(cls, data: list[str], encoding: str):
         logger = data[0].decode(encoding)
         version = Version.parse(data[1], encoding)
         storekrit = data[2].decode(encoding).split(' ')

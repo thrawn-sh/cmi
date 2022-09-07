@@ -2,7 +2,6 @@
 
 import struct
 
-from cmi.event_value import EventValue
 from cmi.field import Field, FieldUnit
 
 
@@ -33,7 +32,7 @@ class EventValue:
         f.write(struct.pack(format, value))
 
     @classmethod
-    def parse(cls, content: str, offset: int, field, encoding: str) -> EventValue:
+    def parse(cls, content: str, offset: int, field, encoding: str):
         size = field.size
         if size == 0:
             return None

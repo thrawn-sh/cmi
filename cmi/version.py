@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from cmi.version import Version
-
-
 class Version:
     def __init__(self, firmware: str, bootsector: str, file_format: str, revision: str) -> None:
         self.firmware = firmware
@@ -14,6 +11,6 @@ class Version:
         f.write(bytes(f'{self.firmware} {self.bootsector} {self.file_format} Revision: {self.revision}\r\n', encoding=encoding))
 
     @classmethod
-    def parse(cls, data: str, encoding: str) -> Version:
+    def parse(cls, data: str, encoding: str):
         version = data.decode(encoding).split(' ')
         return Version(version[0], version[1], version[2], version[4])

@@ -3,7 +3,6 @@
 import struct
 
 from cmi.event import Event
-from cmi.event_group import EventGroup
 from cmi.field import Field, FieldType
 
 
@@ -35,7 +34,7 @@ class EventGroup:
             f.write(bytes('\r\n', encoding=encoding))
 
     @classmethod
-    def parse(cls, content: str, encoding: str) -> EventGroup:
+    def parse(cls, content: str, encoding: str):
         id, analog, digital = struct.unpack_from('<8sxxHH', content, offset=0)
         offset = 14  # id(8) + \r\n(2) + counts(4)
 

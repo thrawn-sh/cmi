@@ -4,7 +4,6 @@ import struct
 
 from cmi.field import Field, FieldType
 from cmi.header import Header
-from cmi.info_h import InfoH
 
 
 class InfoH:
@@ -31,7 +30,7 @@ class InfoH:
         f.write(bytes(f'{self.folder}\r\n', encoding=encoding))
 
     @classmethod
-    def parse(cls, content: str, encoding: str) -> InfoH:
+    def parse(cls, content: str, encoding: str):
         array = content.split(b'\r\n')
         header = Header.parse(array, encoding)
 

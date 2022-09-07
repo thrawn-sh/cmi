@@ -3,8 +3,6 @@
 import enum
 import struct
 
-from cmi.field import Field
-
 
 class FieldType(enum.IntEnum):
     ANALOG = 0
@@ -37,7 +35,7 @@ class Field:
         f.write(packed)
 
     @classmethod
-    def parse(cls, content: str, offset: int, encoding: str) -> Field:
+    def parse(cls, content: str, offset: int, encoding: str):
         source, frame, can_id, device, count, type, id3, unit, format, size, description = struct.unpack_from('<BBBBBBBxBBBxxxxxxx62s', content, offset=offset)
         description = description.decode(encoding)
         return Field(source, frame, can_id, device, count, type, id3, unit, format, size, description)
