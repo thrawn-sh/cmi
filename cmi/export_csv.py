@@ -11,7 +11,6 @@ from cmi.extractor import Configuration, Extractor
 def main() -> None:
     now = datetime.date.today()
     parser = argparse.ArgumentParser(description='query data from C.M.I', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--debug', default=False, type=bool, help='Generate debug output and file', action=argparse.BooleanOptionalAction)
     parser.add_argument('--encoding', default='Windows-1252', type=str, help='file encoding')
     parser.add_argument('--host', default='cmi', type=str, help='C.M.I. hostname')
     parser.add_argument('--port', default=80, type=int, help='C.M.I. port')
@@ -23,7 +22,7 @@ def main() -> None:
     arguments = parser.parse_args()
     before = datetime.datetime.fromisoformat(arguments.before).date()
     after = datetime.datetime.fromisoformat(arguments.after).date()
-    data = Extractor.process(Configuration(arguments.host, arguments.port, arguments.user, arguments.password, arguments.encoding, after, before, arguments.debug))
+    data = Extractor.process(Configuration(arguments.host, arguments.port, arguments.user, arguments.password, arguments.encoding, after, before, False))
 
     with open('cmi.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
