@@ -27,7 +27,7 @@ class Data:
 
     def __init__(self, infoH: InfoH, info: Info, groups: list[EventGroup]) -> None:
         self.infoH = infoH
-        self.info = Info
+        self.info = info
         self.groups = groups
 
 
