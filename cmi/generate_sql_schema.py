@@ -47,7 +47,6 @@ def main() -> None:
             else:
                 name = f'digital-{field.count:02}'
 
-            print(len(field.description.strip()))
             sqlfile.write(f'\t{name}\t{type},{space}-- {field.description}{new_line}')
         sqlfile.write(f'\tUNIQUE\t\t(time){new_line}')
         sqlfile.write(f');{new_line}')
