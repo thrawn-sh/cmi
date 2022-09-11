@@ -30,12 +30,15 @@ class Field:
         self.description = description
 
     def export(self, f, encoding: str) -> None:
-        encoded_description = bytes(self.description, encoding=encoding)
-        packed = struct.pack('<BBBBBBBxBBBxxxxxxx62s', self.source, self.frame, self.can_id, self.device, self.count, self.type, self.id3, self.unit, self.format, self.size, encoded_description)
+        description = self.description
+        description = '\x00'.join(description[i:i+1] for i in range(0, len(description), 1))
+        description = bytes(description, encoding=encoding)
+        packed = struct.pack('<BBBBBBBxBBBxxxxxxx62s', self.source, self.frame, self.can_id, self.device, self.count, self.type, self.id3, self.unit, self.format, self.size, description)
         f.write(packed)
 
     @classmethod
     def parse(cls, content: str, offset: int, encoding: str):
         source, frame, can_id, device, count, type, id3, unit, format, size, description = struct.unpack_from('<BBBBBBBxBBBxxxxxxx62s', content, offset=offset)
         description = description.decode(encoding)
+        description = description.replace('\x00', '')
         return Field(source, frame, can_id, device, count, type, id3, unit, format, size, description)
