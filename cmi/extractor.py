@@ -9,9 +9,6 @@ from cmi.info import Info
 from cmi.info_h import InfoH
 from cmi.event_group import EventGroup
 
-CMI_DUMP = 'cmi-original'
-CMI_EXPORT = 'cmi-export'
-
 
 class Configuration:
 
