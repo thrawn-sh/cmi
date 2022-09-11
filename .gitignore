@@ -1,5 +1,5 @@
 *.csv
 *.sql
-/dump
+/LOG
 /dist
 __pycache__
