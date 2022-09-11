@@ -7,7 +7,7 @@ from cmi.header import Header
 
 
 class InfoH:
-    def __init__(self, header: Header, fields: list[Field], folder: str, raw: str = None ) -> None:
+    def __init__(self, header: Header, fields: list[Field], folder: str, raw: str = None) -> None:
         self.header = header
         self.fields = fields
         self.folder = folder

@@ -3,15 +3,16 @@
 
 import argparse
 import datetime
-import os
 import pathlib
 import shutil
 
 from cmi.extractor import Configuration, Extractor
 
+
 def dump(content: str, file: str) -> None:
     with open(file, 'wb') as f:
         f.write(content)
+
 
 def main() -> None:
     now = datetime.date.today()
@@ -53,7 +54,6 @@ def main() -> None:
         dump(group.raw, f'{arguments.output}/{time.year}/{filename}')
         with open(f'{arguments.output}/{time.year}/{filename}_my', 'wb') as f:
             group.export(f, arguments.encoding)
-
 
 
 if __name__ == '__main__':
