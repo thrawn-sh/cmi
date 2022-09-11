@@ -7,10 +7,11 @@ from cmi.field import Field, FieldType
 
 
 class EventGroup:
-    def __init__(self, id: str, fields: list[Field], events: list[Event]) -> None:
+    def __init__(self, id: str, fields: list[Field], events: list[Event], raw: str = None) -> None:
         self.id = id
         self.fields = fields
         self.events = events
+        self.raw = raw
 
     def export(self, f, encoding: str) -> None:
         f.write(self.id)
@@ -34,7 +35,7 @@ class EventGroup:
             f.write(bytes('\r\n', encoding=encoding))
 
     @classmethod
-    def parse(cls, content: str, encoding: str):
+    def parse(cls, content: str, encoding: str, store: bool):
         id, analog, digital = struct.unpack_from('<8sxxHH', content, offset=0)
         offset = 14  # id(8) + \r\n(2) + counts(4)
 
@@ -55,4 +56,6 @@ class EventGroup:
             events.append(event)
             offset = offset + event_size
 
+        if store:
+            return EventGroup(id, fields, events, content)
         return EventGroup(id, fields, events)

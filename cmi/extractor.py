@@ -44,19 +44,13 @@ class Extractor:
     def __get_info(cls, configuration, session, infoh: InfoH) -> Info:
         url = f'http://{configuration.host}:{configuration.port}/LOG/info{infoh.folder}.log'
         response = session.get(url)
-        info = Info.parse(response.content, configuration.encoding)
-        if configuration.store_raw:
-            info.raw = response.content
-        return info
+        return Info.parse(response.content, configuration.encoding, configuration.store_raw)
 
     @classmethod
     def __get_infoh(cls, configuration, session) -> InfoH:
         url = f'http://{configuration.host}:{configuration.port}/LOG/infoh.log'
         response = session.get(url)
-        infoh = InfoH.parse(response.content, configuration.encoding)
-        if configuration.store_raw:
-            infoh.raw = response.content
-        return infoh
+        return InfoH.parse(response.content, configuration.encoding, configuration.store_raw)
 
     @classmethod
     def __get_event_groups(cls, configuration, session, infoh: InfoH, info: Info) -> list[EventGroup]:
@@ -73,9 +67,7 @@ class Extractor:
             url = f'http://{configuration.host}:{configuration.port}{path}'
             response = session.get(url)
 
-            group = EventGroup.parse(response.content, configuration.encoding)
-            if configuration.store_raw:
-                group.raw = response.content
+            group = EventGroup.parse(response.content, configuration.encoding, configuration.store_raw)
             groups.append(group)
         return groups
 

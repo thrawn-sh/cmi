@@ -7,10 +7,11 @@ from cmi.header import Header
 
 
 class InfoH:
-    def __init__(self, header: Header, fields: list[Field], folder) -> None:
+    def __init__(self, header: Header, fields: list[Field], folder: str, raw: str = None ) -> None:
         self.header = header
         self.fields = fields
         self.folder = folder
+        self.raw = raw
 
     def export(self, f, encoding: str) -> None:
         self.header.export(f, encoding)
@@ -30,7 +31,7 @@ class InfoH:
         f.write(bytes(f'{self.folder}\r\n', encoding=encoding))
 
     @classmethod
-    def parse(cls, content: str, encoding: str):
+    def parse(cls, content: str, encoding: str, store: bool):
         array = content.split(b'\r\n')
         header = Header.parse(array, encoding)
 
@@ -45,4 +46,6 @@ class InfoH:
             offset = offset + 80
 
         folder = array[-2].decode(encoding)
+        if store:
+            return InfoH(header, fields, folder, content)
         return InfoH(header, fields, folder)
