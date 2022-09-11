@@ -51,7 +51,7 @@ def main() -> None:
         filename = time.strftime('data_%Y_%m_%d_%H_%M_%S.log')
         pathlib.Path(f'{arguments.output}/{time.year}').mkdir(parents=True, exist_ok=True)
         dump(group.raw, f'{arguments.output}/{time.year}/{filename}')
-        with open(f'{arguments.output}/{time.year}/{filename}', 'wb') as f:
+        with open(f'{arguments.output}/{time.year}/{filename}_my', 'wb') as f:
             group.export(f, arguments.encoding)
 
 
