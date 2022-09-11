@@ -22,14 +22,12 @@ class EventValue:
             format = '<i'
 
         value = self.value
-        if self.field.unit == FieldUnit.BOOLEAN:
-            value = int(value)
         if self.field.unit == FieldUnit.CELCIUS:
-            value = value * 10
+            value = round(value * 10)
         if self.field.unit == FieldUnit.VOLT:
-            value = value * 100
+            value = round(value * 100)
 
-        f.write(struct.pack(format, value))
+        f.write(struct.pack(format, int(value)))
 
     @classmethod
     def parse(cls, content: str, offset: int, field, encoding: str):
