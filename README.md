@@ -21,7 +21,7 @@ $> poetry build
 $> poetry run cmi/export_csv.py
 ```
 
-### Transfer C.M.I. data to postgres
+### Export the available data from C.M.I. to PostgreSQL
 ```sh
 # generate sql schema for later transfer of C.M.I. data to postgresql
 $> poetry run cmi/generate_sql_schema.py
