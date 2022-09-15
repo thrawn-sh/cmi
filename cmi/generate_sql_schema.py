@@ -43,9 +43,9 @@ def main() -> None:
 
             name = None
             if field.type == FieldType.ANALOG:
-                name = f'analog-{field.count:02}'
+                name = f'analog_{field.count:02}'
             else:
-                name = f'digital-{field.count:02}'
+                name = f'digital_{field.count:02}'
 
             sqlfile.write(f'\t{name}\t{type},{space}-- {field.description}{new_line}')
         sqlfile.write(f'\tUNIQUE\t\t(time){new_line}')
