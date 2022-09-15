@@ -61,15 +61,15 @@ def main() -> None:
     database = None
     try:
         database = get_database_connection(config, arguments.database)
-        cursor = database.cursor()
         for group in data.groups:
+            cursor = database.cursor()
             for event in group.events:
                 values = [event.time]
                 for value in event.values:
                     values.append(value.value)
                 cursor.execute(sql, values)
-        cursor.close()
-        database.commit()
+            cursor.close()
+            database.commit()
     finally:
         if database is not None:
             database.close()
