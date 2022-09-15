@@ -31,7 +31,7 @@ class Field:
 
     def export(self, f, encoding: str) -> None:
         description = self.description
-        description = '\x00'.join(description[i:i+1] for i in range(0, len(description), 1))
+        description = '\x00'.join(description[i:i + 1] for i in range(0, len(description), 1))
         description = bytes(description, encoding=encoding)
         packed = struct.pack('<BBBBBBBxBBBxxxxxxx62s', self.source, self.frame, self.can_id, self.device, self.count, self.type, self.id3, self.unit, self.format, self.size, description)
         f.write(packed)
