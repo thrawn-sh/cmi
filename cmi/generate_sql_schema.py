@@ -38,8 +38,8 @@ def main() -> None:
                 space = ' '
             else:
                 if field.size == 4:
-                    type = 'INT'
-                    space = '     '
+                    type = 'REAL'
+                    space = '    '
 
             name = None
             if field.type == FieldType.ANALOG:
