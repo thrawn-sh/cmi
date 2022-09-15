@@ -34,7 +34,14 @@ $> sudo --user=postgres createdb --encoding=UTF-8 --owner=<USER> <DATABASE>
 $> cat cmi.sql | psql --host=<HOST> --dbname=<DATABASE> <USER>
 
 # create database connection configuration
-$> cat cmi_postgres.txt <<EOF
+$> cat database.ini <<EOF
+[postgresql]
+host=<HOST>
+port=5432
+database=<DATABASE>
+user=<USER>
+password=<PASSWORD>
+sslmode=require
 EOF
 
 $> poetry run cmi/export_postgresql.py
