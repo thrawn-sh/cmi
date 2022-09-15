@@ -10,7 +10,7 @@ from cmi.extractor import Configuration, Extractor
 
 def main() -> None:
     now = datetime.date.today()
-    parser = argparse.ArgumentParser(description='query data from C.M.I', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(description='export data from C.M.I. to CSV', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--encoding', default='Windows-1252', type=str, help='file encoding')
     parser.add_argument('--host', default='cmi', type=str, help='C.M.I. hostname')
     parser.add_argument('--port', default=80, type=int, help='C.M.I. port')

@@ -9,7 +9,7 @@ from cmi.field import FieldType, FieldUnit
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description='generate schema from C.M.I', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(description='generate sql schema from C.M.I.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--encoding', default='Windows-1252', type=str, help='file encoding')
     parser.add_argument('--host', default='cmi', type=str, help='C.M.I. hostname')
     parser.add_argument('--port', default=80, type=int, help='C.M.I. port')
