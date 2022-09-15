@@ -23,7 +23,7 @@ def main() -> None:
 
     new_line = os.linesep
     with open(arguments.file, 'w') as sqlfile:
-        sqlfile.write(f'-- schema for CMI({arguments.host}) generated at {datetime.now()}{new_line}')
+        sqlfile.write(f'-- schema for CMI ({arguments.host}) generated at {datetime.now()}{new_line}')
         sqlfile.write(f'CREATE TABLE IF NOT EXISTS cmi ({new_line}')
         sqlfile.write(f'\ttime\t\tTIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP(0),{new_line}')
 
