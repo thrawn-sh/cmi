@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import datetime
+
+
 class Filter:
 
     @classmethod
@@ -13,3 +16,10 @@ class Filter:
             if original[index] != current[index]:
                 return True
         return False
+
+    @classmethod
+    def within_delta(cls, original: list, current: list, delta: datetime.timedelta) -> bool:
+        if original is None:
+            return False
+
+        return (current[0] - original[0]) < delta
