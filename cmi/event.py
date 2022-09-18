@@ -2,6 +2,7 @@
 
 import datetime
 import struct
+import tzlocal
 
 from cmi.event_value import EventValue
 from cmi.field import Field
@@ -26,7 +27,7 @@ class Event:
         # parse timestamp
         day, month, year, second, minute, hour = struct.unpack_from('<BBBBBBxx', content, offset=offset)
         offset = offset + 8
-        time = datetime.datetime.strptime(f'{2000+year}-{month:02}-{day:02} {hour:02}:{minute:02}:{second:02}', '%Y-%m-%d %H:%M:%S')
+        time = datetime.datetime((2000 + year), month, day, hour, minute, second, tzinfo=tzlocal.get_localzone())
 
         values = []
         for field in fields:
