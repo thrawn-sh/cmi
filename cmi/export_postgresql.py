@@ -29,7 +29,7 @@ def get_latest_event(database) -> list:
     cursor.close()
     if len(result) == 0:
         return None
-    return result
+    return result[0]
 
 
 def generate_sql(infoH: InfoH) -> str:
