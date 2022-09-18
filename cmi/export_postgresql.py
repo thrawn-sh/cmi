@@ -60,6 +60,7 @@ def main() -> None:
     parser.add_argument('--before', default=now.strftime('%Y-%m-%d'), type=str, help='only import data that was created before (YYYY-MM-DD)')
     parser.add_argument('--unique', action=argparse.BooleanOptionalAction, help='only export events if any values have changed')
     parser.add_argument('--min-delta', default=1, type=int, help='minimum number of seconds between 2 events to configer both of them for export')
+    parser.add_argument('--only-new', action=argparse.BooleanOptionalAction, help='only process events that are newer then the fewest own already in the database')
     parser.add_argument('--database', default='postgresql', help='database config to use')
     parser.add_argument('--db-settings', default='database.ini', type=str, help='file containing postgresql connection configuration')
 
@@ -82,6 +83,8 @@ def main() -> None:
                 for value in event.values:
                     values.append(value.value)
 
+                if arguments.only_new and Filter.older(original, values):
+                    continue
                 if Filter.within_delta(original, values, delta):
                     continue
                 if arguments.unique and not Filter.changed(original, values):
