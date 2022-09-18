@@ -8,6 +8,7 @@ import psycopg
 
 from cmi.extractor import Configuration, Extractor
 from cmi.field import FieldType
+from cmi.filter import Filter
 from cmi.info_h import InfoH
 
 
@@ -19,6 +20,16 @@ def get_database_connection(config, database: str):
     else:
         raise Exception(f'Section {database} not found in the {config} file')
     return psycopg.connect(**parameters)
+
+
+def get_latest_event(database) -> list:
+    cursor = database.cursor()
+    cursor.execute('SELECT * FROM cmi ORDER BY time DESC LIMIT 1')
+    result = cursor.fetchall()
+    cursor.close()
+    if len(result) == 0:
+        return None
+    return result
 
 
 def generate_sql(infoH: InfoH) -> str:
@@ -47,29 +58,43 @@ def main() -> None:
     parser.add_argument('--password', default='data', type=str, help='Password to authenticate with')
     parser.add_argument('--after', default='1970-01-01', type=str, help='only import data that was created after (YYYY-MM-DD)')
     parser.add_argument('--before', default=now.strftime('%Y-%m-%d'), type=str, help='only import data that was created before (YYYY-MM-DD)')
+    parser.add_argument('--unique', action=argparse.BooleanOptionalAction, help='only export events if any values have changed')
+    parser.add_argument('--min-delta', default=1, type=int, help='minimum number of seconds between 2 events to configer both of them for export')
     parser.add_argument('--database', default='postgresql', help='database config to use')
     parser.add_argument('--db-settings', default='database.ini', type=str, help='file containing postgresql connection configuration')
 
     arguments = parser.parse_args()
     before = datetime.datetime.fromisoformat(arguments.before).date()
     after = datetime.datetime.fromisoformat(arguments.after).date()
+    delta = datetime.timedelta(seconds=arguments.min_delta)
     config = configparser.ConfigParser()
     config.read(arguments.db_settings)
     data = Extractor.process(Configuration(arguments.host, arguments.port, arguments.user, arguments.password, arguments.encoding, after, before, False))
-
     sql = generate_sql(data.infoH)
     database = None
     try:
         database = get_database_connection(config, arguments.database)
+        original = get_latest_event(database)
+        inserts = []
         for group in data.groups:
-            cursor = database.cursor()
             for event in group.events:
                 values = [event.time]
                 for value in event.values:
                     values.append(value.value)
-                cursor.execute(sql, values)
-            cursor.close()
-            database.commit()
+
+                if Filter.within_delta(original, values, delta):
+                    continue
+                if arguments.unique and not Filter.changed(original, values):
+                    original = values
+                    continue
+
+                original = values
+                inserts.append(values)
+
+        cursor = database.cursor()
+        cursor.executemany(sql, inserts)
+        cursor.close()
+        database.commit()
     finally:
         if database is not None:
             database.close()
