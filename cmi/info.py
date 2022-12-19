@@ -5,7 +5,8 @@ from cmi.log_file import LogFile
 
 
 class Info:
-    def __init__(self, header: Header, log_files: list[LogFile], raw: str = None) -> None:
+    def __init__(self, folder: str, header: Header, log_files: list[LogFile], raw: str = None) -> None:
+        self.folder = folder
         self.header = header
         self.log_files = log_files
         self.raw = raw
@@ -19,7 +20,7 @@ class Info:
             log_file.export(f, encoding)
 
     @classmethod
-    def parse(cls, content: str, encoding: str, store: bool):
+    def parse(cls, folder: str, content: str, encoding: str, store: bool):
         array = content.split(b'\r\n')
         header = Header.parse(array, encoding)
 
@@ -28,5 +29,5 @@ class Info:
             log_files.append(LogFile.parse(line, encoding))
 
         if store:
-            return Info(header, log_files, content)
-        return Info(header, log_files)
+            return Info(folder, header, log_files, content)
+        return Info(folder, header, log_files)

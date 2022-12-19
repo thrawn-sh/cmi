@@ -25,9 +25,9 @@ class Configuration:
 
 class Data:
 
-    def __init__(self, infoH: InfoH, info: Info, groups: list[EventGroup]) -> None:
+    def __init__(self, infoH: InfoH, infos: list[Info], groups: list[EventGroup]) -> None:
         self.infoH = infoH
-        self.info = info
+        self.infos = infos
         self.groups = groups
 
 
@@ -38,10 +38,14 @@ class Extractor:
         return datetime.datetime.strptime(basename, 'data_%Y_%m_%d_%H_%M_%S.log').date()
 
     @classmethod
-    def __get_info(cls, configuration, session, infoh: InfoH) -> Info:
-        url = f'http://{configuration.host}:{configuration.port}/LOG/info{infoh.folder}.log'
-        response = session.get(url)
-        return Info.parse(response.content, configuration.encoding, configuration.store_raw)
+    def __get_infos(cls, configuration, session, infoh: InfoH) -> list[Info]:
+        infos = []
+        for folder in infoh.folders:
+            url = f'http://{configuration.host}:{configuration.port}/LOG/info{folder}.log'
+            response = session.get(url)
+            info = Info.parse(folder, response.content, configuration.encoding, configuration.store_raw)
+            infos.append(info)
+        return infos
 
     @classmethod
     def __get_infoh(cls, configuration, session) -> InfoH:
@@ -50,22 +54,23 @@ class Extractor:
         return InfoH.parse(response.content, configuration.encoding, configuration.store_raw)
 
     @classmethod
-    def __get_event_groups(cls, configuration, session, infoh: InfoH, info: Info) -> list[EventGroup]:
+    def __get_event_groups(cls, configuration, session, infoh: InfoH, infos: list[Info]) -> list[EventGroup]:
         groups = []
-        for log_file in info.log_files:
-            path = log_file.path
-            basename = os.path.basename(path)
-            date = Extractor.__basename_to_date(basename)
-            if configuration.after > date:
-                continue
-            if configuration.before < date:
-                continue
+        for info in infos:
+            for log_file in info.log_files:
+                path = log_file.path
+                basename = os.path.basename(path)
+                date = Extractor.__basename_to_date(basename)
+                if configuration.after > date:
+                    continue
+                if configuration.before < date:
+                    continue
 
-            url = f'http://{configuration.host}:{configuration.port}{path}'
-            response = session.get(url)
+                url = f'http://{configuration.host}:{configuration.port}{path}'
+                response = session.get(url)
 
-            group = EventGroup.parse(response.content, configuration.encoding, configuration.store_raw)
-            groups.append(group)
+                group = EventGroup.parse(response.content, configuration.encoding, configuration.store_raw)
+                groups.append(group)
         return groups
 
     @classmethod
@@ -76,6 +81,6 @@ class Extractor:
         session.headers.update({'User-Agent': 'Winsol/1.0'})
 
         infoh = Extractor.__get_infoh(configuration, session)
-        info = Extractor.__get_info(configuration, session, infoh)
-        groups = Extractor.__get_event_groups(configuration, session, infoh, info)
-        return Data(infoh, info, groups)
+        infos = Extractor.__get_infos(configuration, session, infoh)
+        groups = Extractor.__get_event_groups(configuration, session, infoh, infos)
+        return Data(infoh, infos, groups)

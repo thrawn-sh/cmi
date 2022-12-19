@@ -42,9 +42,10 @@ def main() -> None:
         data.infoH.export(f, arguments.encoding)
 
     print('dumping info raw')
-    dump(data.info.raw, f'{arguments.output}/info{data.infoH.folder}.log')
-    with open(f'{arguments.output}/info{data.infoH.folder}.log_my', 'wb') as f:
-        data.info.export(f, arguments.encoding)
+    for info in data.infos:
+        dump(info.raw, f'{arguments.output}/info{info.folder}.log')
+        with open(f'{arguments.output}/info{info.folder}.log_my', 'wb') as f:
+            info.export(f, arguments.encoding)
 
     print('dumping event_groups raw')
     for group in data.groups:
