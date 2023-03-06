@@ -72,6 +72,7 @@ def main() -> None:
     config.read(arguments.db_settings)
     data = Extractor.process(Configuration(arguments.host, arguments.port, arguments.user, arguments.password, arguments.encoding, after, before, False))
     sql = generate_sql(data.infoH)
+    expected_length = sql.count('%s')
     database = None
     try:
         database = get_database_connection(config, arguments.database)
@@ -83,6 +84,9 @@ def main() -> None:
                 for value in event.values:
                     values.append(value.value)
 
+                if len(values) != expected_length:
+                    # incomplete dataset
+                    continue
                 if arguments.only_new and Filter.older(original, values):
                     continue
                 if Filter.within_delta(original, values, delta):
