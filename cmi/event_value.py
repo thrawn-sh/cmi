@@ -48,3 +48,4 @@ class EventValue:
             return EventValue(field, int(value) / 10)
         if field.unit == FieldUnit.VOLT:
             return EventValue(field, int(value) / 100)
+        return EventValue(field, int(value))
