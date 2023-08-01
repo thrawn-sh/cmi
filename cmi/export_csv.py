@@ -13,6 +13,7 @@ def main() -> None:
     now = datetime.date.today()
     parser = argparse.ArgumentParser(description='export data from C.M.I. to CSV', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--encoding', default='Windows-1252', type=str, help='file encoding')
+    parser.add_argument('--file', default='cmi.csv', type=str, help='output file name')
     parser.add_argument('--host', default='cmi', type=str, help='C.M.I. hostname')
     parser.add_argument('--port', default=80, type=int, help='C.M.I. port')
     parser.add_argument('--user', default='winsol', type=str, help='Username to authenticate with')
@@ -28,7 +29,7 @@ def main() -> None:
     delta = datetime.timedelta(seconds=arguments.min_delta)
     data = Extractor.process(Configuration(arguments.host, arguments.port, arguments.user, arguments.password, arguments.encoding, after, before, False))
 
-    with open('cmi.csv', 'w', newline='') as csvfile:
+    with open(arguments.file, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
         original = None
         for group in data.groups:
