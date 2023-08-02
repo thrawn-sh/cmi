@@ -4,7 +4,6 @@ version = "1.0.0"
 description = "extract data from C.M.I."
 authors = ["Alexander Dreweke <thrawn@shadowhunt.de>"]
 license = "GPL-3.0-or-later"
-readme = "README.md"
 
 [tool.poetry.dependencies]
 argparse = "^1.4.0"
