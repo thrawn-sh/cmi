@@ -33,16 +33,10 @@ $> sudo --user=postgres createdb --encoding=UTF-8 --owner=<USER> <DATABASE>
 # create schema for database
 $> cat cmi.sql | psql --host=<HOST> --dbname=<DATABASE> <USER>
 
-# create database connection configuration
-$> cat > database.ini <<EOF
-[postgresql]
-host=<HOST>
-port=5432
-dbname=<DATABASE>
-user=<USER>
-password=<PASSWORD>
-sslmode=require
-EOF
+# export to database (via command line argument)
+$> poetry run cmi/export_postgresql.py --database "host=<HOST> port=5432 dbname=<DATABASE> user=<USER> password=<PASSWORD> sslmode=required"
 
+# export to database (via environment variable)
+$> export CMI_DATABASE="host=<HOST> port=5432 dbname=<DATABASE> user=<USER> password=<PASSWORD> sslmode=required"
 $> poetry run cmi/export_postgresql.py
 ```

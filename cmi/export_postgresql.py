@@ -2,24 +2,14 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-import configparser
 import datetime
+import os
 import psycopg
 
 from cmi.extractor import Configuration, Extractor
 from cmi.field import FieldType
 from cmi.filter import Filter
 from cmi.info_h import InfoH
-
-
-def get_database_connection(config, database: str):
-    parameters = {}
-    if config.has_section(database):
-        for item in config.items(database):
-            parameters[item[0]] = item[1]
-    else:
-        raise Exception(f'Section {database} not found in the {config} file')
-    return psycopg.connect(**parameters)
 
 
 def get_latest_event(database) -> list:
@@ -61,21 +51,21 @@ def main() -> None:
     parser.add_argument('--unique', action=argparse.BooleanOptionalAction, help='only export events if any values have changed')
     parser.add_argument('--min-delta', default=1, type=int, help='minimum number of seconds between 2 events to configer both of them for export')
     parser.add_argument('--only-new', action=argparse.BooleanOptionalAction, help='only process events that are newer then the fewest own already in the database')
-    parser.add_argument('--database', default='postgresql', help='database config to use')
-    parser.add_argument('--db-settings', default='database.ini', type=str, help='file containing postgresql connection configuration')
+    parser.add_argument('--database', type=str, help='database connection string or set via CMI_DATABASE environment variable')
 
     arguments = parser.parse_args()
     before = datetime.datetime.fromisoformat(arguments.before).date()
     after = datetime.datetime.fromisoformat(arguments.after).date()
     delta = datetime.timedelta(seconds=arguments.min_delta)
-    config = configparser.ConfigParser()
-    config.read(arguments.db_settings)
     data = Extractor.process(Configuration(arguments.host, arguments.port, arguments.user, arguments.password, arguments.encoding, after, before, False))
     sql = generate_sql(data.infoH)
     expected_length = sql.count('%s')
     database = None
     try:
-        database = get_database_connection(config, arguments.database)
+        connection = arguments.database
+        if not connection:
+            connection = os.getenv('CMI_DATABASE')
+        database = psycopg.connect(connection)
         original = get_latest_event(database)
         inserts = []
         for group in data.groups:
