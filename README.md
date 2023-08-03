@@ -40,3 +40,11 @@ $> poetry run cmi/export_postgresql.py --database "host=<HOST> port=5432 dbname=
 $> export CMI_DATABASE="host=<HOST> port=5432 dbname=<DATABASE> user=<USER> password=<PASSWORD> sslmode=required"
 $> poetry run cmi/export_postgresql.py
 ```
+
+## Build docker container
+```sh
+# ensure everything is commited
+$> docker build --tag shadowhunt/cmi:latest --tag shadowhunt/cmi:$(git log -1 --format="%at") .
+$> docker push shadowhunt/cmi:$(git log -1 --format="%at")
+$> docker push shadowhunt/cmi:latest
+```
