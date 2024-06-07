@@ -51,6 +51,27 @@ def main() -> None:
         sqlfile.write(f'\tUNIQUE\t\t(time){new_line}')
         sqlfile.write(f');{new_line}')
 
+        for field in data.infoH.fields:
+            if field.size == 0:
+                continue
+
+            space = None
+            type = None
+            if field.unit == FieldUnit.BOOLEAN:
+                type = 'BOOLEAN'
+                space = ' '
+            else:
+                if field.size == 4:
+                    type = 'REAL'
+                    space = '    '
+
+            name = None
+            if field.type == FieldType.ANALOG:
+                name = f'analog_{field.count:02}'
+            else:
+                name = f'digital_{field.count:02}'
+
+            sqlfile.write(f'ALTER TABLE cmi ADD COLUMN IF NOT EXISTS {name}\t{type};{new_line}')
 
 if __name__ == '__main__':
     main()
