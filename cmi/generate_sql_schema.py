@@ -72,6 +72,7 @@ def main() -> None:
                 name = f'digital_{field.count:02}'
 
             sqlfile.write(f'ALTER TABLE cmi ADD COLUMN IF NOT EXISTS {name}\t{type};{new_line}')
+            sqlfile.write(f'ALTER TABLE cmi ALTER COLUMN {name}\tTYPE {type};{new_line}')
 
 if __name__ == '__main__':
     main()
