@@ -8,7 +8,7 @@ ENV PYTHONUNBUFFERED 1
 # install poetry
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update                                           \
- && apt-get install --yes --no-install-recommends curl       \
+ && apt-get install --yes --no-install-recommends curl cron  \
  && curl -sSL https://install.python-poetry.org/ | python3 - \
  && apt-get purge --yes curl                                 \
  && apt-get autoremove --yes                                 \
@@ -24,5 +24,4 @@ COPY . .
 RUN poetry config virtualenvs.create false                  \
  && poetry install --no-interaction --no-ansi --without dev
 
-ENTRYPOINT [ "poetry", "run", "--quiet", "./cmi/generate_sql_schema.py" ]
-CMD [ "--help" ]
+ENTRYPOINT [ "/usr/src/app/bin/entrypoint.sh" ]

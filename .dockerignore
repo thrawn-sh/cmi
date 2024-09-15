@@ -4,4 +4,3 @@
 .gitignore
 Dockerfile
 README.md
-bin/
