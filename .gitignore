@@ -1,8 +1,8 @@
 *.bin
 *.build
 *.csv
-*.sql
 /LOG
 /dist
 __pycache__
+cmi.sql
 database.ini
