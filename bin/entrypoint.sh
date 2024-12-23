@@ -14,59 +14,59 @@ function command_not_found_handle() {
 }
 
 SCHEMA_PARAMETERS=()
-if [ ! -z "${CMI_ENCODING+x}" ]; then
+if [ -n "${CMI_ENCODING}" ]; then
     SCHEMA_PARAMETERS+=("--encoding=$(eval ${CMI_ENCODING})")
 fi
-if [ ! -z "${CMI_HOST+x}" ]; then
+if [ -n "${CMI_HOST}" ]; then
     SCHEMA_PARAMETERS+=("--host=$(eval ${CMI_HOST})")
 fi
-if [ ! -z "${CMI_PORT+x}" ]; then
+if [ -n "${CMI_PORT}" ]; then
     SCHEMA_PARAMETERS+=("--port=$(eval ${CMI_PORT})")
 fi
-if [ ! -z "${CMI_USER+x}" ]; then
+if [ -n "${CMI_USER}" ]; then
     SCHEMA_PARAMETERS+=("--user=$(eval ${CMI_USER})")
 fi
-if [ ! -z "${CMI_PASSWORD+x}" ]; then
+if [ -n "${CMI_PASSWORD}" ]; then
     SCHEMA_PARAMETERS+=("--password=$(eval ${CMI_PASSWORD})")
 fi
-if [ ! -z "${CMI_SCHEMA+x}" ]; then
+if [ -n "${CMI_SCHEMA}" ]; then
     SCHEMA_PARAMETERS+=("--file=$(eval ${CMI_SCHEMA})")
 fi
 
 function export_cmi() {
     # reevaluate parameters before every call
     parameters=()
-    if [ ! -z "${CMI_ENCODING+x}" ]; then
+    if [ -n "${CMI_ENCODING}" ]; then
         parameters+=("--encoding=$(eval ${CMI_ENCODING})")
     fi
-    if [ ! -z "${CMI_HOST+x}" ]; then
+    if [ -n "${CMI_HOST}" ]; then
         parameters+=("--host=$(eval ${CMI_HOST})")
     fi
-    if [ ! -z "${CMI_PORT+x}" ]; then
+    if [ -n "${CMI_PORT}" ]; then
         parameters+=("--port=$(eval ${CMI_PORT})")
     fi
-    if [ ! -z "${CMI_USER+x}" ]; then
+    if [ -n "${CMI_USER}" ]; then
         parameters+=("--user=$(eval ${CMI_USER})")
     fi
-    if [ ! -z "${CMI_PASSWORD+x}" ]; then
+    if [ -n "${CMI_PASSWORD}" ]; then
         parameters+=("--password=$(eval ${CMI_PASSWORD})")
     fi
-    if [ ! -z "${CMI_AFTER+x}" ]; then
+    if [ -n "${CMI_AFTER}" ]; then
         parameters+=("--after=$(eval ${CMI_AFTER})")
     fi
-    if [ ! -z "${CMI_BEFORE+x}" ]; then
+    if [ -n "${CMI_BEFORE}" ]; then
         parameters+=("--before=$(eval ${CMI_BEFORE})")
     fi
-    if [ ! -z "${CMI_UNIQUE+x}" ]; then
+    if [ -n "${CMI_UNIQUE}" ]; then
         parameters+=("--unique")
     fi
-    if [ ! -z "${CMI_DELTA+x}" ]; then
+    if [ -n "${CMI_DELTA}" ]; then
         parameters+=("--min-delta=$(eval ${CMI_DELTA})")
     fi
-    if [ ! -z "${CMI_NEW+x}" ]; then
+    if [ -n "${CMI_NEW}" ]; then
         parameters+=("--only-new")
     fi
-    if [ ! -z "${CMI_DATABASE+x}" ]; then
+    if [ -n "${CMI_DATABASE}" ]; then
         parameters+=("--database=$(eval ${CMI_DATABASE})")
     fi
     ./bin/export_postgresql ${parameters[@]}
@@ -75,7 +75,7 @@ function export_cmi() {
 ./bin/generate_sql_schema ${SCHEMA_PARAMETERS[@]}
 export_cmi()
 
-if [ ! -z "${CMI_REPEAT+x}" ]; then
+if [ -n "${CMI_REPEAT}" ]; then
     echo "sleeping for ${CMI_REPEAT} seconds"
     sleep ${CMI_REPEAT}
     export_cmi()
