@@ -1,4 +1,6 @@
-CREATE OR REPLACE VIEW cmi_view AS
+DROP VIEW IF EXISTS cmi_view;
+
+CREATE VIEW cmi_view AS
 SELECT 
     time AS time,                                                                   -- time stamp
     analog_00 AS tank_top,                                                          -- hot water tank top
