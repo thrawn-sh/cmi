@@ -70,9 +70,9 @@ function export_cmi() {
     ./bin/export_postgresql ${parameters[@]}
 }
 
-./bin/generate_sql_schema ${SCHEMA_PARAMETERS[@]} | tee /tmp/schema.sql
+./bin/generate_sql_schema ${SCHEMA_PARAMETERS[@]}
 # relies in PGHOST PGPORT PGDATABASE PGUSER PGPASSWORD
-cat /tmp/schema.sql cmi_view.sql | psql
+cat "${CMI_SCHEMA:-cmi.sql}" cmi_view.sql | psql
 export_cmi()
 
 if [ -n "${CMI_REPEAT}" ]; then
