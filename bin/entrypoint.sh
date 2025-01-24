@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 set -e
 set -o pipefail
@@ -66,13 +66,13 @@ function export_cmi() {
     if [ -n "${CMI_NEW}" ]; then
         parameters+=("--only-new")
     fi
-    if [ -n "${CMI_DATABASE}" ]; then
-        parameters+=("--database=$(eval ${CMI_DATABASE})")
-    fi
+    parameters+="--database='host=${PGHOST} port=${PGPORT} dbname=${PGDATABASE} user=${PGUSER} password=${PGPASSWORD}'"
     ./bin/export_postgresql ${parameters[@]}
 }
 
-./bin/generate_sql_schema ${SCHEMA_PARAMETERS[@]}
+./bin/generate_sql_schema ${SCHEMA_PARAMETERS[@]} | tee /tmp/schema.sql
+# relies in PGHOST PGPORT PGDATABASE PGUSER PGPASSWORD
+cat /tmp/schema.sql cmi_view.sql | psql
 export_cmi()
 
 if [ -n "${CMI_REPEAT}" ]; then
