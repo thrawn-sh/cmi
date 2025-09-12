@@ -18,8 +18,12 @@ class EventValue:
         format = ''
         if size == 1:
             format = '<b'
-        if size == 4:
+        elif size == 2:
+            format = '<h'
+        elif size == 4:
             format = '<i'
+        else:
+            raise Exception(f"size ({size}) != 1, 2 or 4!")
 
         value = self.value
         if self.field.unit == FieldUnit.CELCIUS:
@@ -38,8 +42,12 @@ class EventValue:
         format = ''
         if size == 1:
             format = '<b'
-        if size == 4:
+        elif size == 2:
+            format = '<h'
+        elif size == 4:
             format = '<i'
+        else:
+            raise Exception(f"size ({size}) != 1, 2 or 4!")
 
         value = struct.unpack_from(format, content, offset=offset)[0]
         if field.unit == FieldUnit.BOOLEAN:
